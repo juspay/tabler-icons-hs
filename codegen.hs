@@ -8,6 +8,7 @@
 
 import Control.Monad (forM_, when)
 import Data.ByteString qualified as BS
+import Data.ByteString.Char8 qualified as BS8
 import Data.Char (toLower)
 import Data.List (sort)
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist, listDirectory)
@@ -73,6 +74,13 @@ generateIconSet iconsDir outputFile moduleName = do
 
 takeDirectory :: FilePath -> FilePath
 takeDirectory = reverse . dropWhile (/= '/') . reverse
+
+-- Strip HTML comments and newlines from SVG content
+stripHtmlComments :: BS.ByteString -> BS.ByteString
+stripHtmlComments content = 
+  case BS8.breakSubstring "<svg" content of
+    (_, rest) | BS.null rest -> content  -- No <svg found, return original
+    (_, svgPart) -> BS8.filter (/= '\n') svgPart  -- Remove newlines and return content starting from <svg
 
 countIcons :: FilePath -> IO Int
 countIcons iconsDir = do
@@ -198,7 +206,8 @@ generateModuleContent moduleName iconsDir svgFiles = do
     processIcon svgFile = do
       let iconName = svgFileToHaskellName (takeBaseName svgFile)
       svgContent <- BS.readFile (iconsDir </> svgFile)
-      pure (iconName, svgContent, takeBaseName svgFile)
+      let cleanedSvg = stripHtmlComments svgContent
+      pure (iconName, cleanedSvg, takeBaseName svgFile)
 
     extractStyle = reverse . takeWhile (/= '.') . reverse
 
