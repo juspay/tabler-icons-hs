@@ -8,6 +8,7 @@
 
 import Control.Monad (forM_, when)
 import Data.ByteString qualified as BS
+import Data.Char (toLower)
 import Data.List (sort)
 import System.Directory (createDirectoryIfMissing, doesDirectoryExist, listDirectory)
 import System.Environment (getArgs)
@@ -31,12 +32,20 @@ generateBindings tablerPath outputDir = do
   if not tablerExists
     then putStrLn $ "Error: Tabler path does not exist: " <> tablerPath
     else do
-      -- Generate bindings for outline icons
+      -- Count icons first
       let outlinePath = tablerPath </> "icons" </> "outline"
+      let filledPath = tablerPath </> "icons" </> "filled"
+      
+      outlineCount <- countIcons outlinePath
+      filledCount <- countIcons filledPath
+      
+      -- Generate parent module
+      generateParentModule outputDir outlineCount filledCount
+      
+      -- Generate bindings for outline icons
       generateIconSet outlinePath (outputDir </> "Outline.hs") "Web.TablerIcons.Outline"
 
       -- Generate bindings for filled icons
-      let filledPath = tablerPath </> "icons" </> "filled"
       generateIconSet filledPath (outputDir </> "Filled.hs") "Web.TablerIcons.Filled"
 
 generateIconSet :: FilePath -> FilePath -> String -> IO ()
@@ -65,6 +74,71 @@ generateIconSet iconsDir outputFile moduleName = do
 takeDirectory :: FilePath -> FilePath
 takeDirectory = reverse . dropWhile (/= '/') . reverse
 
+countIcons :: FilePath -> IO Int
+countIcons iconsDir = do
+  exists <- doesDirectoryExist iconsDir
+  if not exists
+    then pure 0
+    else do
+      files <- listDirectory iconsDir
+      let svgFiles = filter (\f -> takeExtension f == ".svg") files
+      pure (length svgFiles)
+
+generateParentModule :: FilePath -> Int -> Int -> IO ()
+generateParentModule outputDir outlineCount filledCount = do
+  let outputFile = (takeDirectory outputDir) </> "TablerIcons.hs"  -- Web/TablerIcons.hs
+  
+  -- Create output directory
+  createDirectoryIfMissing True (takeDirectory outputFile)
+  
+  let content = unlines
+        [ "{- |"
+        , "= Tabler Icons"
+        , ""
+        , "Haskell bindings for [Tabler Icons](https://tabler.io/icons) - a set of over 5,000 free SVG icons."
+        , "Each icon is exported as a 'Data.ByteString.ByteString' containing the raw SVG content."
+        , ""
+        , "== Quick Start"
+        , ""
+        , "Using with [Lucid](https://hackage.haskell.org/package/lucid2):"
+        , ""
+        , "@"
+        , "import Web.TablerIcons.Outline qualified as Outline"
+        , "import Web.TablerIcons.Filled qualified as Filled"
+        , "import Lucid"
+        , ""
+        , "myButton = 'Lucid.button_' ['Lucid.class_' \\\"btn\\\"] $ do"
+        , "  'Lucid.div_' ['Lucid.class_' \\\"w-6 h-6 text-blue-500\\\"] $ 'Lucid.toHtmlRaw' Outline.home"
+        , "  \\\"Home\\\""
+        , ""
+        , "myFilledIcon = 'Lucid.div_' ['Lucid.class_' \\\"w-6 h-6 text-red-500\\\"] $"
+        , "  'Lucid.toHtmlRaw' Filled.heart"
+        , "@"
+        , ""
+        , "== Available Icon Sets"
+        , ""
+        , "* __'Web.TablerIcons.Outline'__ - " <> show outlineCount <> " outline style icons (comprehensive set)"
+        , "* __'Web.TablerIcons.Filled'__ - " <> show filledCount <> " filled style icons (subset of popular icons)"
+        , ""
+        , "All " <> show filledCount <> " filled icons have corresponding outline versions with the same name."
+        , ""
+        , "== Icon Naming"
+        , ""
+        , "Icon names follow Haskell naming conventions:"
+        , ""
+        , "* Hyphens become underscores: @building-arch@ → @building_arch@"
+        , "* Names starting with numbers get @icon_@ prefix: @2fa@ → @icon_2fa@"
+        , "* Haskell keywords get @_@ suffix: @type@ → @type_@"
+        , "-}"
+        , "module Web.TablerIcons () where"
+        , ""
+        , "-- This module provides documentation only."
+        , "-- Import Web.TablerIcons.Outline and Web.TablerIcons.Filled directly."
+        ]
+  
+  writeFile outputFile content
+  putStrLn $ "Generated: " <> outputFile
+
 generateModuleContent :: String -> FilePath -> [FilePath] -> IO String
 generateModuleContent moduleName iconsDir svgFiles = do
   iconData <- mapM processIcon svgFiles
@@ -72,9 +146,9 @@ generateModuleContent moduleName iconsDir svgFiles = do
   let bindings =
         map
           ( \(name, content, original) ->
-              "-- | "
+              "-- | SVG for icon @"
                 <> original
-                <> "\n"
+                <> "@\n"
                 <> "-- \n"
                 <> "-- [View on Tabler.io](https://tabler.io/icons/icon/"
                 <> original
@@ -88,40 +162,30 @@ generateModuleContent moduleName iconsDir svgFiles = do
           )
           iconData
 
+  let iconCount = length svgFiles
+      style = extractStyle moduleName
   pure $
     unlines $
       [ "{-# LANGUAGE NoImplicitPrelude #-}"
       , "{-# LANGUAGE OverloadedStrings #-}"
       , ""
       , "{- |"
-      , "= Tabler " <> extractStyle moduleName <> " Icons"
+      , "= Tabler " <> style <> " Icons"
       , ""
-      , "Auto-generated Haskell bindings for Tabler " <> extractStyle moduleName <> " icons."
+      , "This module contains " <> show iconCount <> " " <> map toLower style <> " style icons."
+      , "For comprehensive documentation, examples, and usage patterns, see \"Web.TablerIcons\"."
+      , ""
       , "Each icon is exported as a 'ByteString' containing the raw SVG content."
       , ""
-      , "== Quick Start"
+      , "== Quick Import"
       , ""
       , "@"
-      , "import " <> moduleName <> " qualified as Icons"
-      , "import Lucid"
-      , ""
-      , "myButton = 'Lucid.button_' ['Lucid.class_' \\\"btn\\\"] $ do"
-      , "  'Lucid.div_' ['Lucid.class_' \\\"w-6 h-6 text-blue-500\\\"] $ 'Lucid.toHtmlRaw' Icons.home"
-      , "  \\\"Home\\\""
+      , "import " <> moduleName <> " qualified as " <> style
       , "@"
       , ""
-      , "== Usage with CSS Frameworks"
+      , "== Usage"
       , ""
-      , "=== TailwindCSS"
-      , "@"
-      , "iconWithTailwind icon = 'Lucid.div_' ['Lucid.class_' \\\"w-6 h-6 text-gray-600\\\"] $ 'Lucid.toHtmlRaw' icon"
-      , "@"
-      , ""
-      , "=== Custom CSS"
-      , "@"
-      , "iconWithCSS icon = 'Lucid.div_' ['Lucid.style_' \\\"width: 24px; height: 24px; color: #374151;\\\"] $ 'Lucid.toHtmlRaw' icon"
-      , "@"
-      , ""
+      , "See \"Web.TablerIcons\" for detailed examples and CSS framework integration."
       , "-}"
       , "module " <> moduleName <> " where"
       , ""

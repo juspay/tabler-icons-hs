@@ -23,6 +23,7 @@ build-type:     Simple
 
 library
   exposed-modules:
+      Web.TablerIcons
       Web.TablerIcons.Outline
       Web.TablerIcons.Filled
   other-modules:

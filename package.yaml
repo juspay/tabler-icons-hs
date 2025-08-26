@@ -61,5 +61,6 @@ dependencies:
 library:
   source-dirs: src
   exposed-modules:
+    - Web.TablerIcons
     - Web.TablerIcons.Outline
     - Web.TablerIcons.Filled
