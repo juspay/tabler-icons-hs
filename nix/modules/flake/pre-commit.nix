@@ -10,6 +10,7 @@
     pre-commit.settings = {
       hooks = {
         nixpkgs-fmt.enable = true;
+        hpack.enable = true;
       };
     };
 
