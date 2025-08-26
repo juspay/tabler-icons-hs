@@ -10,6 +10,9 @@
 
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.flake = false;
+
+    tabler-icons.url = "github:tabler/tabler-icons";
+    tabler-icons.flake = false;
   };
 
   outputs = inputs:

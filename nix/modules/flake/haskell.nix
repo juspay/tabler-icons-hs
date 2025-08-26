@@ -16,7 +16,8 @@
         inherit root;
         fileset = lib.fileset.unions [
           (root + /src)
-          (root + /haskell-template.cabal)
+          (root + /tabler-icons.cabal)
+          (root + /package.yaml)
           (root + /LICENSE)
           (root + /README.md)
         ];
@@ -37,7 +38,7 @@
 
       # Add your package overrides here
       settings = {
-        haskell-template = {
+        tabler-icons = {
           stan = true;
           # haddock = false;
         };
@@ -53,7 +54,6 @@
     };
 
     # Default package & app.
-    packages.default = self'.packages.haskell-template;
-    apps.default = self'.apps.haskell-template;
+    packages.default = self'.packages.tabler-icons;
   };
 }
