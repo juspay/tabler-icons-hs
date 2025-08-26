@@ -9,7 +9,7 @@
     git-hooks.url = "github:cachix/git-hooks.nix";
     git-hooks.flake = false;
 
-    tabler-icons.url = "github:tabler/tabler-icons";
+    tabler-icons.url = "github:tabler/tabler-icons/v3.34.1";
     tabler-icons.flake = false;
   };
 

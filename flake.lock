@@ -108,15 +108,16 @@
     "tabler-icons": {
       "flake": false,
       "locked": {
-        "lastModified": 1753288523,
-        "narHash": "sha256-6uitx/iapxqQ1hJa8RYOnXl7UBS+pFC8pr5jNatj3FI=",
+        "lastModified": 1753055604,
+        "narHash": "sha256-VUykmN7JzbqIw60xLwC9nPl2dOcIMpYpU3A5GuRblqg=",
         "owner": "tabler",
         "repo": "tabler-icons",
-        "rev": "50b5d0496e9f1bd977325c6950e5b09ed7d40b31",
+        "rev": "e8fcec66034d15fa893d4d3c740e584f8518ed44",
         "type": "github"
       },
       "original": {
         "owner": "tabler",
+        "ref": "v3.34.1",
         "repo": "tabler-icons",
         "type": "github"
       }
