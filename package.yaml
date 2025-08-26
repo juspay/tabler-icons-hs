@@ -38,12 +38,13 @@ default-extensions:
   - ViewPatterns
 
 name: tabler-icons
-version: 0.1.0.0
+version: 0.1.0.1
 license: MIT
 copyright: 2025 Sridhar Ratnakumar
 maintainer: srid@srid.ca
 author: Sridhar Ratnakumar
 category: Web
+homepage: https://github.com/juspay/tabler-icons-hs
 synopsis: Haskell bindings for Tabler SVG icons
 description: |
   Haskell bindings for the Tabler icons library.
