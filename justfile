@@ -10,6 +10,6 @@ docs:
 repl *ARGS:
     cabal repl {{ ARGS }}
 
-# Run ghcid -- auto-recompile and run `main` function
+# Run ghcid
 run:
-    ghcid -T :main
+    ghcid

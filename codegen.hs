@@ -1,8 +1,7 @@
 #!/usr/bin/env runhaskell
 {-# LANGUAGE OverloadedStrings #-}
 
--- \|
--- Simple Tabler Icons Code Generator
+-- | Simple Tabler Icons Code Generator
 --
 -- This script generates Haskell modules from Tabler SVG files.
 -- Usage: runhaskell codegen.hs <tabler-path> <output-dir>

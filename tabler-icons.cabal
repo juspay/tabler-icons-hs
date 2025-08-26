@@ -16,7 +16,7 @@ description:    Haskell bindings for the Tabler icons library.
 category:       Web
 author:         Sridhar Ratnakumar
 maintainer:     srid@srid.ca
-copyright:      2024 Sridhar Ratnakumar
+copyright:      2025 Sridhar Ratnakumar
 license:        MIT
 license-file:   LICENSE
 build-type:     Simple
