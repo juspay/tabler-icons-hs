@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           tabler-icons
-version:        0.1.0.1
+version:        0.1.0.2
 synopsis:       Haskell bindings for Tabler SVG icons
 description:    Haskell bindings for the Tabler icons library.
                 .

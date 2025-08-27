@@ -13,18 +13,18 @@ import Web.TablerIcons.Outline qualified as Outline
 import Web.TablerIcons.Filled qualified as Filled
 import Lucid
 
-myButton = 'Lucid.button_' ['Lucid.class_' \"btn\"] $ do
-  'Lucid.div_' ['Lucid.class_' \"w-6 h-6 text-blue-500\"] $ 'Lucid.toHtmlRaw' Outline.home
+myButton = button_ [class_ \"btn\"] $ do
+  div_ [class_ \"w-6 h-6 text-blue-500\"] $ toHtmlRaw Outline.home
   \"Home\"
 
-myFilledIcon = 'Lucid.div_' ['Lucid.class_' \"w-6 h-6 text-red-500\"] $
-  'Lucid.toHtmlRaw' Filled.heart
+myFilledIcon = div_ [class_ \"w-6 h-6 text-red-500\"] $
+  toHtmlRaw Filled.heart
 @
 
 == Available Icon Sets
 
-* __'Web.TablerIcons.Outline'__ - 4964 outline style icons (comprehensive set)
-* __'Web.TablerIcons.Filled'__ - 981 filled style icons (subset of popular icons)
+* __"Web.TablerIcons.Outline"__ - 4964 outline style icons (comprehensive set)
+* __"Web.TablerIcons.Filled"__ - 981 filled style icons (subset of popular icons)
 
 All 981 filled icons have corresponding outline versions with the same name.
 

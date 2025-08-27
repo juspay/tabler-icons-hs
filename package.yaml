@@ -38,7 +38,7 @@ default-extensions:
   - ViewPatterns
 
 name: tabler-icons
-version: 0.1.0.1
+version: 0.1.0.2
 license: MIT
 copyright: 2025 Sridhar Ratnakumar
 maintainer: srid@srid.ca
